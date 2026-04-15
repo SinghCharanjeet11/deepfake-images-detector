@@ -1,0 +1,42 @@
+# Environment
+.env
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Database
+database/*.db
+database/*.db-shm
+database/*.db-wal
+
+# Uploaded files and generated assets
+uploads/
+thumbnails/
+
+# ML model weights (large binary files)
+models/*.pth
+models/*.pt
+models/*.h5
+models/*.pkl
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Pytest
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Build
+dist/
+build/
+*.egg-info/
