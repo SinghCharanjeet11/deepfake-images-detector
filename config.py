@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     )
 
     # ML model weights path
-    MODEL_WEIGHTS_PATH: str = "models/detector.pth"
+    MODEL_WEIGHTS_PATH: str = "models/deepfake_detector.pth"
 
     @field_validator("ALLOWED_MIME_TYPES", mode="before")
     @classmethod

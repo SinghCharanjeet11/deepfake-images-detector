@@ -63,7 +63,8 @@ def generate_pdf_report(record: DetectionResult) -> str:
         parent=styles["Title"],
         textColor=BRAND_DARK,
         fontSize=22,
-        spaceAfter=4,
+        leading=26,
+        spaceAfter=12,
         alignment=TA_CENTER,
     )
     sub_style = ParagraphStyle(
@@ -71,6 +72,7 @@ def generate_pdf_report(record: DetectionResult) -> str:
         parent=styles["Normal"],
         textColor=colors.grey,
         fontSize=10,
+        leading=14,
         alignment=TA_CENTER,
         spaceAfter=20,
     )
@@ -89,8 +91,9 @@ def generate_pdf_report(record: DetectionResult) -> str:
         parent=styles["Normal"],
         textColor=label_col,
         fontSize=28,
+        leading=34,
         alignment=TA_CENTER,
-        spaceAfter=4,
+        spaceAfter=12,
     )
     story.append(Paragraph(f"<b>{label_display}</b>", badge_style))
 
@@ -99,6 +102,7 @@ def generate_pdf_report(record: DetectionResult) -> str:
         parent=styles["Normal"],
         textColor=colors.darkgrey,
         fontSize=14,
+        leading=18,
         alignment=TA_CENTER,
         spaceAfter=20,
     )
