@@ -100,8 +100,7 @@ async def server_error_handler(request: Request, exc):
 # ------------------------------------------------------------------ #
 # Static files — frontend served by FastAPI
 # ------------------------------------------------------------------ #
-# Uncomment once Ayush provides the frontend build:
-# app.mount("/", StaticFiles(directory="static", html=True), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 # ------------------------------------------------------------------ #
@@ -111,3 +110,13 @@ async def server_error_handler(request: Request, exc):
 def health_check():
     """Quick check that the server is running."""
     return {"status": "ok", "version": "1.0.0"}
+
+
+# ------------------------------------------------------------------ #
+# Root redirect
+# ------------------------------------------------------------------ #
+@app.get("/", tags=["Frontend"])
+def root():
+    """Redirect to the upload page."""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/static/index.html")

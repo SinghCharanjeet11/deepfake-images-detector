@@ -190,18 +190,18 @@ def get_job_status(job_id: str, db: Session = Depends(get_db)):
 @router.get("/history", response_model=HistoryResponse)
 def get_history(
     page: int = 1,
-    limit: int = 20,
+    page_size: int = 10,
     db: Session = Depends(get_db),
 ):
     """
     Return a paginated list of completed detections, newest first.
 
     Query params:
-        page  — page number (default 1)
-        limit — results per page (default 20, max 20)
+        page      — page number (default 1)
+        page_size — results per page (default 10, max 20)
     """
-    # Clamp limit to max 20
-    limit = min(limit, 20)
+    # Clamp page_size to max 20
+    page_size = min(page_size, 20)
     if page < 1:
         page = 1
 
@@ -212,23 +212,27 @@ def get_history(
     )
 
     total = base_query.count()
-    pages = max(1, -(-total // limit))  # ceiling division
+    total_pages = max(1, -(-total // page_size))  # ceiling division
 
-    records = base_query.offset((page - 1) * limit).limit(limit).all()
+    records = base_query.offset((page - 1) * page_size).limit(page_size).all()
 
-    items = [
-        HistoryItem(
-            job_id=r.id,
-            filename=r.filename,
-            timestamp=r.created_at,
-            label=LabelEnum(r.label) if r.label else None,
-            confidence=r.confidence,
-            thumbnail_url=f"/api/thumbnails/{r.id}" if r.thumbnail_path else None,
-        )
+    results = [
+        {
+            "job_id": r.id,
+            "filename": r.filename,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+            "label": r.label,
+            "confidence": r.confidence,
+        }
         for r in records
     ]
 
-    return HistoryResponse(results=items, total=total, page=page, pages=pages)
+    return {
+        "results": results,
+        "total": total,
+        "page": page,
+        "total_pages": total_pages,
+    }
 
 
 # ------------------------------------------------------------------ #

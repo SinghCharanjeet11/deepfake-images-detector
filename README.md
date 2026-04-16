@@ -100,8 +100,11 @@ This platform uses deep learning to identify whether a face image is real or AI-
 ## 🏆 Current Status
 
 - ✅ **Image Detection**: Fully functional with 99.83% test accuracy
+- ✅ **Backend API**: Complete with all endpoints
+- ✅ **Frontend UI**: Clean, responsive web interface
+- ✅ **Database**: SQLite with job tracking
+- ✅ **Reports**: PDF and JSON export
 - ⏳ **Video Detection**: Coming soon
-- ⏳ **Web Interface**: In development by team
 
 ## 🧠 Machine Learning Model
 
@@ -180,9 +183,36 @@ cd deepfake-detect
 
 # Install dependencies
 pip install -r requirements.txt
+
+# Initialize database
+python scripts/init_db.py
 ```
 
+### Running the Application
+
+#### Start the Server
+```bash
+# Windows
+start_server.bat
+
+# Linux/Mac
+uvicorn main:app --reload --port 8000
+```
+
+The application will be available at:
+- **Frontend**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
+- **Health Check**: http://localhost:8000/health
+
 ### Usage
+
+#### Web Interface
+1. Open http://localhost:8000 in your browser
+2. Upload an image (JPEG or PNG)
+3. Wait for analysis (usually <5 seconds)
+4. View results with confidence score
+5. Download PDF or JSON report
+6. Check history of all analyses
 
 #### Test Image Detection
 ```bash
@@ -206,14 +236,39 @@ print(f"Confidence: {result.confidence}")  # 0.0 to 1.0
 
 ```
 deepfake-detect/
+├── api/                         # Backend API
+│   ├── routes.py               # API endpoints
+│   ├── models.py               # Pydantic models
+│   └── file_utils.py           # File handling utilities
+├── database/                    # Database layer
+│   ├── connection.py           # SQLite connection
+│   └── models.py               # SQLAlchemy models
 ├── detector/                    # ML inference module
 │   ├── __init__.py
 │   └── model.py                # DeepfakeDetector class
 ├── models/                      # Trained model weights
 │   └── deepfake_detector.pth   # EfficientNet-B4 model (75MB)
+├── reports/                     # Report generation
+│   ├── pdf_generator.py        # PDF reports
+│   └── json_generator.py       # JSON exports
 ├── scripts/                     # Utility scripts
+│   ├── init_db.py              # Initialize database
 │   ├── train_model.py          # Local training script (reference)
 │   └── test_inference.py       # Test inference on samples
+├── static/                      # Frontend files
+│   ├── index.html              # Upload page
+│   ├── results.html            # Results page
+│   ├── history.html            # History dashboard
+│   ├── css/
+│   │   └── styles.css          # All styles
+│   └── js/
+│       ├── upload.js           # Upload functionality
+│       ├── results.js          # Results display
+│       └── history.js          # History pagination
+├── tests/                       # Test suite
+│   ├── test_upload.py
+│   ├── test_jobs.py
+│   └── test_history.py
 ├── datasets/                    # Training data (not in Git)
 │   └── archive/real_vs_fake/   # Download from Kaggle
 ├── .kiro/specs/                 # Project specifications
@@ -221,7 +276,10 @@ deepfake-detect/
 │       ├── requirements.md
 │       ├── design.md
 │       └── *-tasks.md          # Task files for each role
+├── main.py                      # FastAPI application
+├── config.py                    # Configuration
 ├── requirements.txt             # Python dependencies
+├── start_server.bat             # Windows server startup script
 └── README.md                    # This file
 ```
 
@@ -233,14 +291,18 @@ deepfake-detect/
 - **torchvision**: Image transformations
 - **PIL**: Image loading and processing
 
-### Backend (In Development)
+### Backend (Completed)
 - **FastAPI**: Web framework
 - **SQLite**: Database
 - **Uvicorn**: ASGI server
+- **SQLAlchemy**: ORM
+- **ReportLab**: PDF generation
 
-### Frontend (In Development)
+### Frontend (Completed)
 - **HTML5/CSS3/JavaScript**: UI
 - **Vanilla JS**: No framework (keeping it simple)
+- **Responsive Design**: Mobile-first approach
+- **Clean UI**: Minimal, professional design
 
 ## 👥 Team Roles
 
@@ -315,14 +377,35 @@ python scripts/test_inference.py
 python -c "from detector.model import DeepfakeDetector; import glob; d = DeepfakeDetector('models/deepfake_detector.pth'); real = glob.glob('datasets/archive/real_vs_fake/real-vs-fake/test/real/*.jpg')[:20]; fake = glob.glob('datasets/archive/real_vs_fake/real-vs-fake/test/fake/*.jpg')[:20]; real_correct = sum(1 for img in real if d.detect(img).label == 'real'); fake_correct = sum(1 for img in fake if d.detect(img).label == 'fake'); print(f'Real: {real_correct}/20 correct'); print(f'Fake: {fake_correct}/20 correct'); print(f'Overall: {(real_correct+fake_correct)/40*100:.1f}% accuracy')"
 ```
 
+## ⚠️ Known Limitations
+
+### Domain Shift Issue
+
+The model is trained on a specific dataset of fake images (older GAN-generated faces from 2019-2020). It may not detect fakes from:
+- Modern AI generators (DALL-E, Midjourney, Stable Diffusion)
+- Newer GAN architectures (StyleGAN3, etc.)
+- Different generation techniques not in training data
+
+**Why this happens**: This is called "domain shift" - the model performs best on data similar to its training distribution.
+
+**Performance on training distribution**: 99.83% accuracy ✅
+
+**For demo**: Use images from the test dataset (`datasets/archive/real_vs_fake/real-vs-fake/test/`) to showcase the model's true capability.
+
+**Solution**: Retrain with more diverse datasets including modern generators (planned for post-demo).
+
+See `DOMAIN_SHIFT_ISSUE.md` for detailed explanation.
+
 ## 🔮 Future Work
 
 - [ ] Video detection support
+- [ ] Retrain with modern AI-generated faces (DALL-E, Midjourney, etc.)
 - [ ] Web interface deployment
 - [ ] Batch processing
 - [ ] API rate limiting
 - [ ] Model optimization (quantization)
-- [ ] Support for more deepfake types
+- [ ] Ensemble models for better generalization
+- [ ] Confidence thresholds and "uncertain" category
 
 ## 📄 License
 
