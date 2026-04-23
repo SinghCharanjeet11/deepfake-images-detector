@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Deepfake Detection</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+<div class="page-wrapper">
+
+    <!-- Navigation -->
+    <nav class="topnav">
+        <a class="topnav-brand" href="/static/index.html">
+            <div class="topnav-brand-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+            </div>
+            <span class="topnav-brand-name">DeepDetect</span>
+            <span class="topnav-brand-tag">v1.0</span>
+        </a>
+        <div class="topnav-links">
+            <a href="/static/index.html" class="topnav-link">Analyze</a>
+            <a href="/static/dashboard.html" class="topnav-link active">Dashboard</a>
+            <a href="/static/history.html" class="topnav-link">History</a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container dash-container">
+
+            <!-- Page Header -->
+            <div class="dash-header">
+                <div>
+                    <div class="page-header-eyebrow">Overview</div>
+                    <h1 class="dash-title">Dashboard</h1>
+                    <p class="dash-subtitle">All-time detection statistics at a glance.</p>
+                </div>
+                <a href="/static/index.html" class="btn btn-primary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    New Analysis
+                </a>
+            </div>
+
+            <!-- Stat Cards -->
+            <div class="stat-grid" id="statGrid">
+                <div class="stat-card">
+                    <div class="stat-card-label">Total Analyzed</div>
+                    <div class="stat-card-value" id="statTotal">—</div>
+                    <div class="stat-card-sub">all uploads</div>
+                </div>
+                <div class="stat-card real">
+                    <div class="stat-card-label">Real Images</div>
+                    <div class="stat-card-value" id="statReal">—</div>
+                    <div class="stat-card-sub" id="statRealPct">—</div>
+                </div>
+                <div class="stat-card fake">
+                    <div class="stat-card-label">Fake / Deepfakes</div>
+                    <div class="stat-card-value" id="statFake">—</div>
+                    <div class="stat-card-sub" id="statFakePct">—</div>
+                </div>
+                <div class="stat-card accent">
+                    <div class="stat-card-label">Avg Confidence</div>
+                    <div class="stat-card-value" id="statConf">—</div>
+                    <div class="stat-card-sub">across completed jobs</div>
+                </div>
+            </div>
+
+            <!-- Real vs Fake Bar -->
+            <div class="dash-card" id="splitCard" style="display:none;">
+                <div class="dash-card-title">Real vs Fake Split</div>
+                <div class="split-bar-wrap">
+                    <div class="split-bar">
+                        <div class="split-fill real" id="splitReal" style="width:0%"></div>
+                        <div class="split-fill fake" id="splitFake" style="width:0%"></div>
+                    </div>
+                    <div class="split-legend">
+                        <span class="split-dot real"></span>
+                        <span id="splitRealLabel">Real — 0%</span>
+                        <span class="split-dot fake" style="margin-left:1.5rem;"></span>
+                        <span id="splitFakeLabel">Fake — 0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-column: status breakdown + recent activity -->
+            <div class="dash-two-col">
+
+                <!-- Status Breakdown -->
+                <div class="dash-card">
+                    <div class="dash-card-title">Job Status Breakdown</div>
+                    <div class="status-list" id="statusList">
+                        <div class="status-row">
+                            <span class="status-dot complete"></span>
+                            <span class="status-name">Completed</span>
+                            <span class="status-val" id="statusComplete">—</span>
+                        </div>
+                        <div class="status-row">
+                            <span class="status-dot processing"></span>
+                            <span class="status-name">Processing</span>
+                            <span class="status-val" id="statusProcessing">—</span>
+                        </div>
+                        <div class="status-row">
+                            <span class="status-dot failed"></span>
+                            <span class="status-name">Failed</span>
+                            <span class="status-val" id="statusFailed">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="dash-card">
+                    <div class="dash-card-title">
+                        Recent Activity
+                        <a href="/static/history.html" class="dash-card-link">View all →</a>
+                    </div>
+                    <div id="recentList">
+                        <div class="loading-inline">
+                            <div class="spinner" style="width:24px;height:24px;border-width:2px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Error state -->
+            <div class="error-section" id="errorSection" style="display:none;">
+                <div class="error-card">
+                    <svg class="error-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <h2>Unable to Load Dashboard</h2>
+                    <p id="errorText">Could not fetch statistics from the server.</p>
+                    <button class="btn btn-primary" onclick="location.reload()">Retry</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <span class="footer-copy">© 2026 Deepfake Detection Platform</span>
+            <div class="footer-status">
+                <div class="footer-status-dot"></div>
+                <span>Model online</span>
+            </div>
+        </div>
+    </footer>
+
+</div>
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>
