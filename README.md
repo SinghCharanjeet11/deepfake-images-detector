@@ -636,8 +636,4 @@ For questions, issues, or contributions:
 
 ---
 
-**Built with ❤️ for combating deepfake misinformation**
 
-**Last Updated**: April 2026  
-**Version**: 1.0.0  
-**Status**: Production Ready ✅
