@@ -117,6 +117,6 @@ def health_check():
 # ------------------------------------------------------------------ #
 @app.get("/", tags=["Frontend"])
 def root():
-    """Redirect to the upload page."""
+    """Redirect to the landing page."""
     from fastapi.responses import RedirectResponse
-    return RedirectResponse(url="/static/index.html")
+    return RedirectResponse(url="/static/landing.html")

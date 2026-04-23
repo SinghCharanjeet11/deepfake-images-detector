@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered deepfake detection with 99.83% accuracy">
+    <title>DeepDetect — AI-Powered Deepfake Detection</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/landing.css">
+</head>
+<body class="landing-body">
+
+    <!-- Navigation -->
+    <nav class="topnav landing-nav">
+        <a class="topnav-brand" href="/static/landing.html">
+            <div class="topnav-brand-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+            </div>
+            <span class="topnav-brand-name">DeepDetect</span>
+        </a>
+        <div class="topnav-links">
+            <a href="#how-it-works" class="topnav-link">How It Works</a>
+            <a href="#features" class="topnav-link">Features</a>
+            <a href="/static/dashboard.html" class="topnav-link">Dashboard</a>
+            <a href="/static/index.html" class="btn btn-primary btn-sm">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-bg-grid"></div>
+        <div class="hero-container">
+            <div class="hero-content fade-in-up">
+                <div class="hero-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                    AI-Powered Forensics
+                </div>
+                <h1 class="hero-title">
+                    Detect Deepfakes<br/>
+                    <span class="hero-gradient">Instantly</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Upload a face image and our EfficientNet-B4 model will classify it as real or AI-generated with 99.83% accuracy.
+                </p>
+                <div class="hero-cta">
+                    <a href="/static/index.html" class="btn btn-primary btn-lg">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        Analyze Image
+                    </a>
+                    <a href="#comparison" class="btn btn-secondary btn-lg">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 16 16 12 12 8"/>
+                            <line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                        See Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison-section" id="comparison">
+        <div class="container">
+            <div class="section-header-center fade-in-up">
+                <div class="section-eyebrow">Interactive Demo</div>
+                <h2 class="section-title">Can You Tell the Difference?</h2>
+                <p class="section-subtitle">Our AI model can detect subtle artifacts invisible to the human eye</p>
+            </div>
+
+            <div class="comparison-container fade-in-up">
+                <div class="comparison-card real-card">
+                    <div class="comparison-image-wrapper">
+                        <div class="comparison-image">
+                            <img src="/static/images/real_sample.png" alt="Real face sample" style="width: 100%; height: 100%; object-fit: cover;" />
+                        </div>
+                        <div class="comparison-badge real">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Real Image
+                        </div>
+                    </div>
+                    <div class="comparison-details">
+                        <h3>Authentic Photo</h3>
+                        <ul class="comparison-features">
+                            <li>Natural skin texture with pores</li>
+                            <li>Consistent lighting & shadows</li>
+                            <li>Realistic eye reflections</li>
+                            <li>Natural hair strands</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="comparison-divider">
+                    <div class="vs-badge">VS</div>
+                </div>
+
+                <div class="comparison-card fake-card">
+                    <div class="comparison-image-wrapper">
+                        <div class="comparison-image">
+                            <img src="/static/images/fake_sample.png" alt="Fake face sample" style="width: 100%; height: 100%; object-fit: cover;" />
+                        </div>
+                        <div class="comparison-badge fake">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                            AI-Generated
+                        </div>
+                    </div>
+                    <div class="comparison-details">
+                        <h3>Deepfake Image</h3>
+                        <ul class="comparison-features">
+                            <li>Overly smooth skin texture</li>
+                            <li>Inconsistent lighting artifacts</li>
+                            <li>Unnatural symmetry</li>
+                            <li>Blurred face boundaries</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comparison-cta fade-in-up">
+                <p>Upload your own image to test our AI detection</p>
+                <a href="/static/index.html" class="btn btn-primary">Try It Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works-section" id="how-it-works">
+        <div class="container">
+            <div class="section-header-center fade-in-up">
+                <div class="section-eyebrow">Simple Process</div>
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">Get results in seconds with our streamlined detection process</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step-card fade-in-up">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </div>
+                    <h3>Upload Image</h3>
+                    <p>Drag and drop or browse to upload a face image (JPEG or PNG format)</p>
+                </div>
+
+                <div class="step-arrow fade-in-up">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </div>
+
+                <div class="step-card fade-in-up">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="2"/>
+                            <circle cx="12" cy="5" r="2"/>
+                            <circle cx="12" cy="19" r="2"/>
+                            <circle cx="5" cy="12" r="2"/>
+                            <circle cx="19" cy="12" r="2"/>
+                            <line x1="12" y1="7" x2="12" y2="10"/>
+                            <line x1="12" y1="14" x2="12" y2="17"/>
+                            <line x1="7" y1="12" x2="10" y2="12"/>
+                            <line x1="14" y1="12" x2="17" y2="12"/>
+                        </svg>
+                    </div>
+                    <h3>AI Analysis</h3>
+                    <p>Our EfficientNet-B4 model analyzes the image for deepfake artifacts</p>
+                </div>
+
+                <div class="step-arrow fade-in-up">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </div>
+
+                <div class="step-card fade-in-up">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <h3>Get Results</h3>
+                    <p>Receive verdict (Real/Fake) with confidence score and detailed report</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="section-header-center fade-in-up">
+                <div class="section-eyebrow">Powerful Features</div>
+                <h2 class="section-title">Why Choose DeepDetect</h2>
+                <p class="section-subtitle">Industry-leading accuracy with cutting-edge technology</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3>99.83% Accuracy</h3>
+                    <p>Trained on 140,000 images with state-of-the-art deep learning</p>
+                </div>
+
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <h3>Instant Results</h3>
+                    <p>Get detection results in less than 1 second on CPU</p>
+                </div>
+
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                    <h3>Detailed Reports</h3>
+                    <p>Export comprehensive PDF and JSON reports for documentation</p>
+                </div>
+
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                    </div>
+                    <h3>Confidence Scores</h3>
+                    <p>Transparent confidence metrics for every detection</p>
+                </div>
+
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <h3>RESTful API</h3>
+                    <p>Easy integration with your applications via REST API</p>
+                </div>
+
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
+                    <h3>Secure & Private</h3>
+                    <p>Your images are processed securely and never stored permanently</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-card fade-in-up">
+                <h2>Ready to Detect Deepfakes?</h2>
+                <p>Start analyzing images with our AI-powered detection system</p>
+                <div class="cta-buttons">
+                    <a href="/static/index.html" class="btn btn-primary btn-lg">Get Started Free</a>
+                    <a href="/docs" class="btn btn-secondary btn-lg">View API Docs</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="landing-brand-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <span class="landing-brand-name">DeepDetect</span>
+                </div>
+                <div class="footer-links">
+                    <a href="/static/index.html">Analyze</a>
+                    <a href="/static/dashboard.html">Dashboard</a>
+                    <a href="/static/history.html">History</a>
+                    <a href="/docs">API Docs</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 DeepDetect. Built for combating deepfake misinformation.</span>
+                <div class="footer-status">
+                    <div class="footer-status-dot"></div>
+                    <span>Model Online</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/landing.js"></script>
+</body>
+</html>
