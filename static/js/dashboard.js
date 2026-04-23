@@ -1,207 +1,118 @@
 // Dashboard functionality
-const loading = document.getElementById('loading');
-const dashboardContent = document.getElementById('dashboardContent');
+const statTotal = document.getElementById('statTotal');
+const statReal = document.getElementById('statReal');
+const statFake = document.getElementById('statFake');
+const statConf = document.getElementById('statConf');
+const statRealPct = document.getElementById('statRealPct');
+const statFakePct = document.getElementById('statFakePct');
+const statusComplete = document.getElementById('statusComplete');
+const statusProcessing = document.getElementById('statusProcessing');
+const statusFailed = document.getElementById('statusFailed');
+const recentList = document.getElementById('recentList');
 const errorSection = document.getElementById('errorSection');
 const errorText = document.getElementById('errorText');
+const splitCard = document.getElementById('splitCard');
+const splitReal = document.getElementById('splitReal');
+const splitFake = document.getElementById('splitFake');
+const splitRealLabel = document.getElementById('splitRealLabel');
+const splitFakeLabel = document.getElementById('splitFakeLabel');
 
-// Load dashboard data on page load
-loadDashboard();
+// Load stats on page load
+loadStats();
 
-async function loadDashboard() {
+async function loadStats() {
     try {
-        loading.style.display = 'block';
-        dashboardContent.style.display = 'none';
-        errorSection.style.display = 'none';
-
-        // Fetch history data
-        const response = await fetch('/api/history?page=1&page_size=100');
+        const response = await fetch('/api/stats');
         
         if (!response.ok) {
-            throw new Error('Failed to load dashboard data');
+            throw new Error('Failed to load statistics');
         }
 
         const data = await response.json();
-        const results = data.results || [];
-
-        // Calculate statistics
-        const stats = calculateStats(results);
-        
-        // Update UI
-        updateStats(stats);
-        updateDonutChart(stats);
-        updateRecentActivity(results.slice(0, 7));
-        updateRecentDetections(results.slice(0, 6));
-
-        loading.style.display = 'none';
-        dashboardContent.style.display = 'block';
+        displayStats(data);
+        displayRecent(data.recent);
 
     } catch (error) {
-        console.error('Error loading dashboard:', error);
-        showError(error.message || 'Unable to load dashboard. Please try again.');
+        console.error('Error loading stats:', error);
+        showError(error.message || 'Unable to load dashboard data.');
     }
 }
 
-function calculateStats(results) {
-    const total = results.length;
-    const realCount = results.filter(r => r.label.toLowerCase() === 'real').length;
-    const fakeCount = results.filter(r => r.label.toLowerCase() === 'fake').length;
-    
-    const realPercentage = total > 0 ? Math.round((realCount / total) * 100) : 0;
-    const fakePercentage = total > 0 ? Math.round((fakeCount / total) * 100) : 0;
-    
-    const avgConfidence = total > 0 
-        ? Math.round(results.reduce((sum, r) => sum + r.confidence, 0) / total * 100)
-        : 0;
+function displayStats(data) {
+    // Main stats
+    statTotal.textContent = data.total.toLocaleString();
+    statReal.textContent = data.real.toLocaleString();
+    statFake.textContent = data.fake.toLocaleString();
+    statConf.textContent = `${data.avg_confidence}%`;
 
-    // Calculate this week's count (last 7 days)
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    const thisWeekCount = results.filter(r => new Date(r.created_at) >= oneWeekAgo).length;
+    // Percentages
+    const complete = data.complete || 1; // avoid division by zero
+    const realPct = Math.round((data.real / complete) * 100);
+    const fakePct = Math.round((data.fake / complete) * 100);
+    
+    statRealPct.textContent = `${realPct}% of completed`;
+    statFakePct.textContent = `${fakePct}% of completed`;
 
-    return {
-        total,
-        realCount,
-        fakeCount,
-        realPercentage,
-        fakePercentage,
-        avgConfidence,
-        thisWeekCount
-    };
+    // Status breakdown
+    statusComplete.textContent = data.complete.toLocaleString();
+    statusProcessing.textContent = data.processing.toLocaleString();
+    statusFailed.textContent = data.failed.toLocaleString();
+
+    // Real vs Fake split bar
+    if (data.complete > 0) {
+        splitCard.style.display = 'block';
+        
+        // Animate after a brief delay
+        setTimeout(() => {
+            splitReal.style.width = `${realPct}%`;
+            splitFake.style.width = `${fakePct}%`;
+        }, 200);
+
+        splitRealLabel.textContent = `Real — ${realPct}%`;
+        splitFakeLabel.textContent = `Fake — ${fakePct}%`;
+    }
 }
 
-function updateStats(stats) {
-    // Total analyses
-    document.getElementById('totalAnalyses').textContent = stats.total.toLocaleString();
-    document.getElementById('totalChange').textContent = `+${stats.thisWeekCount} this week`;
-    
-    // Real images
-    document.getElementById('realCount').textContent = stats.realCount.toLocaleString();
-    document.getElementById('realPercentage').textContent = `${stats.realPercentage}%`;
-    
-    // Fake images
-    document.getElementById('fakeCount').textContent = stats.fakeCount.toLocaleString();
-    document.getElementById('fakePercentage').textContent = `${stats.fakePercentage}%`;
-    
-    // Average confidence
-    document.getElementById('avgConfidence').textContent = `${stats.avgConfidence}%`;
-}
-
-function updateDonutChart(stats) {
-    const total = stats.total;
-    const realCount = stats.realCount;
-    const fakeCount = stats.fakeCount;
-
-    // Update center text
-    document.getElementById('donutTotal').textContent = total.toLocaleString();
-
-    // Update legend
-    document.getElementById('legendReal').textContent = realCount.toLocaleString();
-    document.getElementById('legendFake').textContent = fakeCount.toLocaleString();
-
-    if (total === 0) return;
-
-    // Calculate arc lengths (circumference = 2πr = 2π*80 ≈ 502)
-    const circumference = 502;
-    const realArcLength = (realCount / total) * circumference;
-    const fakeArcLength = (fakeCount / total) * circumference;
-
-    // Update real arc
-    const realArc = document.getElementById('realArc');
-    realArc.setAttribute('stroke-dasharray', `${realArcLength} ${circumference}`);
-    realArc.setAttribute('stroke-dashoffset', '125'); // Start at top
-
-    // Update fake arc (starts where real ends)
-    const fakeArc = document.getElementById('fakeArc');
-    fakeArc.setAttribute('stroke-dasharray', `${fakeArcLength} ${circumference}`);
-    fakeArc.setAttribute('stroke-dashoffset', `${125 - realArcLength}`);
-}
-
-function updateRecentActivity(results) {
-    const activityList = document.getElementById('activityList');
-    activityList.innerHTML = '';
-
-    if (results.length === 0) {
-        activityList.innerHTML = '<div class="empty-activity">No recent activity</div>';
+function displayRecent(recent) {
+    if (!recent || recent.length === 0) {
+        recentList.innerHTML = '<div class="empty-recent">No completed analyses yet.</div>';
         return;
     }
 
-    results.forEach(result => {
-        const item = document.createElement('div');
-        item.className = 'activity-item';
-        
-        const label = result.label.toLowerCase();
-        const confidence = Math.round(result.confidence * 100);
-        const date = new Date(result.created_at);
-        const timeAgo = formatTimeAgo(date);
+    recentList.innerHTML = '';
 
-        item.innerHTML = `
-            <div class="activity-icon ${label}">
-                ${label === 'real' 
-                    ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>'
-                    : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
-                }
-            </div>
-            <div class="activity-details">
-                <div class="activity-title">${escapeHtml(result.filename)}</div>
-                <div class="activity-meta">${timeAgo} · ${confidence}% confidence</div>
-            </div>
-            <span class="activity-badge ${label}">${label}</span>
-        `;
-
-        item.onclick = () => {
-            window.location.href = `/static/results.html?job_id=${result.job_id}`;
+    recent.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'recent-item';
+        row.onclick = () => {
+            window.location.href = `/static/results.html?job_id=${item.job_id}`;
         };
 
-        activityList.appendChild(item);
-    });
-}
+        const label = item.label.toLowerCase();
+        const confidence = Math.round(item.confidence * 100);
+        const date = new Date(item.created_at);
 
-function updateRecentDetections(results) {
-    const recentGrid = document.getElementById('recentGrid');
-    recentGrid.innerHTML = '';
-
-    if (results.length === 0) {
-        recentGrid.innerHTML = '<div class="empty-recent">No detections yet. <a href="/static/index.html">Analyze your first image →</a></div>';
-        return;
-    }
-
-    results.forEach(result => {
-        const item = document.createElement('div');
-        item.className = 'recent-card';
-        
-        const label = result.label.toLowerCase();
-        const confidence = Math.round(result.confidence * 100);
-        const date = new Date(result.created_at);
-
-        item.innerHTML = `
-            <div class="recent-image">
-                <img src="/api/thumbnails/${result.job_id}" alt="${escapeHtml(result.filename)}" onerror="this.style.opacity='0.3'">
-                <div class="recent-overlay">
-                    <span class="recent-badge ${label}">${label}</span>
-                </div>
-            </div>
+        row.innerHTML = `
             <div class="recent-info">
-                <div class="recent-filename">${escapeHtml(result.filename)}</div>
-                <div class="recent-meta">
-                    <span>${confidence}% confidence</span>
-                    <span>·</span>
-                    <span>${formatDate(date)}</span>
-                </div>
+                <div class="recent-filename">${escapeHtml(item.filename)}</div>
+                <div class="recent-time">${formatTimeAgo(date)}</div>
+            </div>
+            <div class="recent-badge">
+                <span class="badge ${label}">${label.charAt(0).toUpperCase() + label.slice(1)}</span>
+                <span class="recent-conf">${confidence}%</span>
             </div>
         `;
 
-        item.onclick = () => {
-            window.location.href = `/static/results.html?job_id=${result.job_id}`;
-        };
-
-        recentGrid.appendChild(item);
+        recentList.appendChild(row);
     });
 }
 
 function showError(message) {
     errorText.textContent = message;
-    loading.style.display = 'none';
     errorSection.style.display = 'block';
+    document.getElementById('statGrid').style.display = 'none';
+    splitCard.style.display = 'none';
+    document.querySelector('.dash-two-col').style.display = 'none';
 }
 
 function formatTimeAgo(date) {
@@ -216,11 +127,6 @@ function formatTimeAgo(date) {
     if (hours > 0) return `${hours}h ago`;
     if (minutes > 0) return `${minutes}m ago`;
     return 'Just now';
-}
-
-function formatDate(date) {
-    const options = { month: 'short', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
 }
 
 function escapeHtml(text) {

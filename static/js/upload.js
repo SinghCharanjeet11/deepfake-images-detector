@@ -19,7 +19,10 @@ const SUPPORTED_TYPES = ['image/jpeg', 'image/png', 'image/jpg'];
 const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB
 
 // Drag and drop events
-dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('click', (e) => {
+    if (e.target.closest('label') || e.target === fileInput) return;
+    fileInput.click();
+});
 
 dropZone.addEventListener('dragover', (e) => {
     e.preventDefault();

@@ -6,6 +6,7 @@
     <meta name="description" content="Browse all previous deepfake detection analyses with results and confidence scores.">
     <title>History — Deepfake Detection</title>
     <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/history.css">
 </head>
 <body>
 <div class="page-wrapper">
@@ -24,6 +25,7 @@
             <a href="/static/landing.html" class="topnav-link">Home</a>
             <a href="/static/dashboard.html" class="topnav-link">Dashboard</a>
             <a href="/static/index.html" class="topnav-link">Analyze</a>
+            <a href="/static/dashboard.html" class="topnav-link">Dashboard</a>
             <a href="/static/history.html" class="topnav-link active">History</a>
         </div>
     </nav>
@@ -35,7 +37,42 @@
             <div class="page-header">
                 <div class="page-header-eyebrow">Detection Log</div>
                 <h1>Analysis History</h1>
-                <p class="subtitle">All previous detections, newest first.</p>
+                <p class="subtitle">All completed detections, newest first.</p>
+            </div>
+
+            <!-- Search & Filter Bar -->
+            <div class="history-toolbar">
+                <div class="search-wrap">
+                    <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="search-input"
+                        placeholder="Search by filename…"
+                        autocomplete="off"
+                    />
+                    <button class="search-clear" id="searchClear" style="display:none;" title="Clear search">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="filter-tabs" id="filterTabs">
+                    <button class="filter-tab active" data-label="all">All</button>
+                    <button class="filter-tab" data-label="real">
+                        <span class="filter-dot real"></span> Real
+                    </button>
+                    <button class="filter-tab" data-label="fake">
+                        <span class="filter-dot fake"></span> Fake
+                    </button>
+                </div>
+
+                <a href="/static/index.html" class="btn btn-primary btn-sm">
+                    + New Analysis
+                </a>
             </div>
 
             <!-- Loading -->
@@ -46,11 +83,8 @@
 
             <!-- History list -->
             <div class="history-section" id="historySection" style="display:none;">
-                <div class="history-controls">
+                <div class="history-meta">
                     <span class="history-count" id="historyCount"></span>
-                    <a href="/static/index.html" class="btn btn-primary" style="padding:0.5rem 1rem; font-size:0.8rem;">
-                        + New Analysis
-                    </a>
                 </div>
 
                 <div class="history-list" id="historyGrid"></div>
@@ -75,13 +109,11 @@
             <!-- Empty state -->
             <div class="empty-state" id="emptyState" style="display:none;">
                 <svg class="empty-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                <h2>No records yet</h2>
-                <p>Upload an image to start building your detection history.</p>
-                <a href="/static/index.html" class="btn btn-primary">Analyze an Image</a>
+                <h2 id="emptyTitle">No records yet</h2>
+                <p id="emptyMsg">Upload an image to start building your detection history.</p>
+                <a href="/static/index.html" class="btn btn-primary" id="emptyAction">Analyze an Image</a>
             </div>
 
             <!-- Error -->
@@ -113,51 +145,5 @@
 
 </div>
 <script src="/static/js/history.js"></script>
-<script>
-/* Patch history.js's createHistoryItem to use new markup */
-window.__origCreateHistoryItem = window.createHistoryItem;
-
-function createHistoryItem(result) {
-    const item = document.createElement('div');
-    item.className = 'history-item';
-    item.onclick = () => {
-        window.location.href = `/static/results.html?job_id=${result.job_id}`;
-    };
-
-    const label = result.label.toLowerCase();
-    const confidence = Math.round(result.confidence * 100);
-    const date = new Date(result.created_at);
-
-    item.innerHTML = `
-        <img class="history-thumb" src="/api/thumbnails/${result.job_id}" alt="Thumb" onerror="this.style.opacity='0.3'">
-        <div class="history-info">
-            <div class="history-filename">${escapeHtml(result.filename)}</div>
-            <div class="history-timestamp">${formatDate(date)}</div>
-        </div>
-        <div class="history-badge">
-            <span class="badge ${label}">${label.charAt(0).toUpperCase() + label.slice(1)}</span>
-            <span class="history-conf">${confidence}%</span>
-        </div>
-        <svg class="history-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="9 18 15 12 9 6"/>
-        </svg>
-    `;
-
-    return item;
-}
-
-/* also patch displayHistory to update the count label */
-const _origDisplayHistory = window.displayHistory;
-window.displayHistory = function(results) {
-    const count = document.getElementById('historyCount');
-    if (count) {
-        count.textContent = `${results.length} record${results.length !== 1 ? 's' : ''} shown`;
-    }
-    /* call manually since createHistoryItem is patched */
-    const grid = document.getElementById('historyGrid');
-    grid.innerHTML = '';
-    results.forEach(r => grid.appendChild(createHistoryItem(r)));
-};
-</script>
 </body>
 </html>

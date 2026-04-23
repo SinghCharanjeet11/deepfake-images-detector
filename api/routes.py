@@ -191,6 +191,8 @@ def get_job_status(job_id: str, db: Session = Depends(get_db)):
 def get_history(
     page: int = 1,
     page_size: int = 10,
+    label: str = None,
+    search: str = None,
     db: Session = Depends(get_db),
 ):
     """
@@ -199,6 +201,8 @@ def get_history(
     Query params:
         page      — page number (default 1)
         page_size — results per page (default 10, max 20)
+        label     — filter by "real" or "fake" (optional)
+        search    — filter by filename substring (optional)
     """
     # Clamp page_size to max 20
     page_size = min(page_size, 20)
@@ -211,6 +215,16 @@ def get_history(
         .order_by(DetectionResult.created_at.desc())
     )
 
+    # Optional label filter
+    if label in ("real", "fake"):
+        base_query = base_query.filter(DetectionResult.label == label)
+
+    # Optional filename search
+    if search:
+        base_query = base_query.filter(
+            DetectionResult.filename.ilike(f"%{search}%")
+        )
+
     total = base_query.count()
     total_pages = max(1, -(-total // page_size))  # ceiling division
 
@@ -220,7 +234,7 @@ def get_history(
         {
             "job_id": r.id,
             "filename": r.filename,
-            "created_at": r.created_at.isoformat() if r.created_at else None,
+            "timestamp": r.created_at.isoformat() if r.created_at else None,
             "label": r.label,
             "confidence": r.confidence,
         }
@@ -231,7 +245,7 @@ def get_history(
         "results": results,
         "total": total,
         "page": page,
-        "total_pages": total_pages,
+        "pages": total_pages,
     }
 
 
@@ -272,6 +286,69 @@ def download_json_report(job_id: str, db: Session = Depends(get_db)):
     report = generate_json_report(record)
     return JSONResponse(content=report)
 
+
+# ------------------------------------------------------------------ #
+# Dashboard stats
+# ------------------------------------------------------------------ #
+
+@router.get("/stats")
+def get_stats(db: Session = Depends(get_db)):
+    """
+    Return summary statistics for the dashboard.
+    Counts total, real, fake, processing, and failed jobs.
+    Also returns the 5 most recent completed detections.
+    """
+    from sqlalchemy import func
+
+    total      = db.query(DetectionResult).count()
+    complete   = db.query(DetectionResult).filter(DetectionResult.status == "complete").count()
+    processing = db.query(DetectionResult).filter(DetectionResult.status == "processing").count()
+    failed     = db.query(DetectionResult).filter(DetectionResult.status == "failed").count()
+    real_count = db.query(DetectionResult).filter(
+        DetectionResult.status == "complete", DetectionResult.label == "real"
+    ).count()
+    fake_count = db.query(DetectionResult).filter(
+        DetectionResult.status == "complete", DetectionResult.label == "fake"
+    ).count()
+
+    avg_confidence = (
+        db.query(func.avg(DetectionResult.confidence))
+        .filter(DetectionResult.status == "complete")
+        .scalar()
+    )
+
+    recent = (
+        db.query(DetectionResult)
+        .filter(DetectionResult.status == "complete")
+        .order_by(DetectionResult.completed_at.desc())
+        .limit(5)
+        .all()
+    )
+
+    return {
+        "total": total,
+        "complete": complete,
+        "processing": processing,
+        "failed": failed,
+        "real": real_count,
+        "fake": fake_count,
+        "avg_confidence": round(avg_confidence * 100, 1) if avg_confidence else 0,
+        "recent": [
+            {
+                "job_id": r.id,
+                "filename": r.filename,
+                "label": r.label,
+                "confidence": r.confidence,
+                "created_at": r.created_at.isoformat() if r.created_at else None,
+            }
+            for r in recent
+        ],
+    }
+
+
+# ------------------------------------------------------------------ #
+# Reports
+# ------------------------------------------------------------------ #
 
 @router.get("/reports/{job_id}/pdf")
 def download_pdf_report(job_id: str, db: Session = Depends(get_db)):
