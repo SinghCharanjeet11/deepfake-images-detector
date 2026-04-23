@@ -293,3 +293,29 @@ def download_pdf_report(job_id: str, db: Session = Depends(get_db)):
             "Content-Disposition": f'attachment; filename="report_{job_id[:8]}.pdf"'
         },
     )
+
+
+
+import requests
+import re
+from fastapi.responses import Response
+from fastapi import HTTPException
+
+@router.get("/fetch-url")
+def fetch_image_from_url(url: str):
+    try:
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        res = requests.get(url, headers=headers, timeout=10)
+        # Check if it's html
+        if 'text/html' in res.headers.get('Content-Type', ''):
+            match = re.search(r'<meta property="og:image" content="(.*?)"', res.text)
+            if match:
+                img_url = match.group(1).replace("&amp;", "&")
+                img_res = requests.get(img_url, headers=headers, timeout=10)
+                return Response(content=img_res.content, media_type=img_res.headers.get('Content-Type', 'image/jpeg'))
+            else:
+                raise HTTPException(status_code=400, detail="Could not extract image from webpage.")
+        else:
+            return Response(content=res.content, media_type=res.headers.get('Content-Type', 'image/jpeg'))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

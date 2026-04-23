@@ -11,6 +11,9 @@ from fastapi import UploadFile, HTTPException
 
 from config import settings
 
+# Streaming chunk size (256 KB per chunk)
+CHUNK_SIZE = 256 * 1024
+
 
 def validate_mime_type(file: UploadFile) -> None:
     """
@@ -89,12 +92,21 @@ def save_upload(file: UploadFile, job_id: str) -> tuple[str, int]:
 
 async def read_file_size(file: UploadFile) -> int:
     """
-    Read the entire file into memory to determine its size, then reset
-    the stream so it can be saved afterwards.
-
-    Note: For very large files this is memory-intensive. A streaming
-    approach can replace this if needed.
+    Get file size from Content-Length header without loading into memory.
+    Falls back to reading if header is unavailable.
     """
-    content = await file.read()
-    await file.seek(0)
-    return len(content)
+    # Try to get size from Content-Length header first (efficient)
+    if file.size is not None:
+        return file.size
+    
+    # Fallback: seek to end to get size without loading full content
+    try:
+        await file.seek(0, 2)  # Seek to end
+        size = await file.tell()
+        await file.seek(0)  # Reset to start
+        return size
+    except Exception:
+        # Last resort: read content (memory-intensive)
+        content = await file.read()
+        await file.seek(0)
+        return len(content)

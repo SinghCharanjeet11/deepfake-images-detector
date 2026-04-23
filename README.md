@@ -118,6 +118,17 @@ This platform analyzes face images and determines whether they are authentic pho
 - ✅ **RESTful API** with OpenAPI docs
 - ✅ **SQLite database** for persistence
 
+## 🖥️ Frontend & User Experience
+
+The platform features a premium, enterprise-grade web interface designed specifically for forensic verification and seamless user interaction. Built using Vanilla HTML, CSS, and modern JavaScript, it is lightweight, fast, and removes the need for bulky front-end frameworks.
+
+### UI Highlights
+- **Intuitive Workflow**: Smooth drag-and-drop zones with live previews, file size validation, and interactive micro-animations.
+- **Progressive Analytics Dashboards**: Polished results display with confidence score cards, data visualizations, and professional forensic report integration.
+- **Premium Aesthetics**: High-contrast, accessibility-friendly dark mode with glassmorphism overlays and custom SVG icon sets.
+- **Zero Dependencies**: Client-side logic runs on pure browser APIs (Vanilla Fetch) ensuring fast load times and security.
+- **Persistent History Archive**: Fully paginated tracking of prior queries featuring thumbnail-view galleries.
+
 ## 🧠 Machine Learning Model
 
 ### Architecture

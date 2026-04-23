@@ -6,11 +6,10 @@
     <meta name="description" content="Upload a face image and get instant AI-powered deepfake detection with a confidence score.">
     <title>Deepfake Detection Platform</title>
     <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/enhanced.css">
 </head>
 <body>
 <div class="page-wrapper">
-
-    <!-- Navigation -->
     <nav class="topnav">
         <a class="topnav-brand" href="/static/index.html">
             <div class="topnav-brand-icon">
@@ -26,64 +25,62 @@
             <a href="/static/history.html" class="topnav-link">History</a>
         </div>
     </nav>
-
     <main>
         <div class="container">
-            <!-- Page Header -->
             <div class="page-header">
                 <div class="page-header-eyebrow">AI-Powered Forensics</div>
                 <h1>Detect Deepfakes Instantly</h1>
                 <p class="subtitle">Upload a face image and our model will classify it as real or AI-generated with a confidence score.</p>
             </div>
-
-            <!-- Upload Card -->
-            <div class="upload-card">
+            <div class="upload-card glow-on-hover">
                 <div class="drop-zone" id="dropZone">
-                    <svg class="upload-icon" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="17 8 12 3 7 8"/>
-                        <line x1="12" y1="3" x2="12" y2="15"/>
-                    </svg>
-                    <p class="drop-text">Drop an image here to analyze</p>
-                    <p class="drop-subtext">or</p>
-                    <label for="fileInput" class="btn btn-primary" style="cursor:pointer;">Browse File</label>
-                    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" hidden>
-                    <p class="file-info">JPEG · PNG &nbsp;·&nbsp; Max 500 MB</p>
+                    <div id="dropZoneContent">
+                        <svg class="upload-icon bounce-hover" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        <p class="drop-text">Drop an image here to analyze</p>
+                        <p class="drop-subtext">or</p>
+                        <label for="fileInput" class="btn btn-primary" style="cursor:pointer;">Browse File</label>
+                        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" hidden>
+                        <p class="file-info">JPEG · PNG &nbsp;·&nbsp; Max 500 MB</p>
+                    </div>
+                    <div class="selected-file" id="selectedFile" style="display:none; flex-direction:column; align-items:center;">
+                        <img id="previewImage" src="" alt="Preview" class="inner-preview">
+                        <div class="file-details" style="text-align:center; margin-top:1rem;">
+                            <p class="file-name" id="fileName"></p>
+                            <p class="file-size" id="fileSize"></p>
+                        </div>
+                        <button class="btn-remove" id="removeFile" aria-label="Remove file" style="position:absolute; top:1rem; right:1rem;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="selected-file" id="selectedFile" style="display:none;">
-                    <div class="file-preview">
-                        <img id="previewImage" src="" alt="Preview">
-                    </div>
-                    <div class="file-details">
-                        <p class="file-name" id="fileName"></p>
-                        <p class="file-size" id="fileSize"></p>
-                    </div>
-                    <button class="btn-remove" id="removeFile" aria-label="Remove file">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                <div style="margin-top:2rem;">
+                    <button class="btn btn-upload btn-primary" id="uploadBtn" style="display:none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                         </svg>
+                        Run Analysis
                     </button>
                 </div>
 
-                <button class="btn btn-upload btn-primary" id="uploadBtn" style="display:none;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    </svg>
-                    Run Analysis
-                </button>
-
                 <div class="progress-container" id="progressContainer" style="display:none;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <p class="progress-text" id="progressText">Uploading…</p>
+                    <div class="progress-spinner"></div>
+                    <ul class="progress-steps" id="progressSteps">
+                        <li class="step active" id="step1">Detecting face...</li>
+                        <li class="step" id="step2">Extracting features...</li>
+                        <li class="step" id="step3">Running CNN model...</li>
+                        <li class="step" id="step4">Analyzing patterns...</li>
+                    </ul>
                 </div>
-
                 <div class="error-message" id="errorMessage" style="display:none;"></div>
             </div>
 
-            <!-- Info Cards -->
             <div class="info-section">
                 <div class="info-card">
                     <div class="info-card-icon">
@@ -113,21 +110,17 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </main>
-
-    <!-- Footer -->
     <footer>
         <div class="footer-inner">
-            <span class="footer-copy">© 2026 Deepfake Detection Platform</span>
+            <span class="footer-copy" style="font-size: 0.65rem; color: #94a3b8; opacity: 0.6; line-height: 1.4; text-align: left;">Created by Ayush Shrivastava<br>Divyanshi jaiwal<br>Charanjeet Singh<br>Chirag pandey</span>
             <div class="footer-status">
                 <div class="footer-status-dot"></div>
                 <span>Model online</span>
             </div>
         </div>
     </footer>
-
 </div>
 <script src="/static/js/upload.js"></script>
 </body>

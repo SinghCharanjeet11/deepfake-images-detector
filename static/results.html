@@ -3,181 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Detection result — real or deepfake classification with confidence score.">
-    <title>Detection Results — Deepfake Detection</title>
+    <title>Verification Report — Deepfake Detection</title>
     <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/enhanced.css">
 </head>
 <body>
-<div class="page-wrapper">
-
-    <!-- Navigation -->
+<div class="page-wrapper fade-in-report">
     <nav class="topnav">
         <a class="topnav-brand" href="/static/index.html">
-            <div class="topnav-brand-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
-            </div>
-            <span class="topnav-brand-name">DeepDetect</span>
-            <span class="topnav-brand-tag">v1.0</span>
+            <div class="topnav-brand-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <span class="topnav-brand-name">DeepDetect</span><span class="topnav-brand-tag">v1.0</span>
         </a>
         <div class="topnav-links">
             <a href="/static/index.html" class="topnav-link">Analyze</a>
             <a href="/static/history.html" class="topnav-link">History</a>
         </div>
     </nav>
-
     <main>
-        <div class="container">
-
-            <!-- Page Header -->
-            <div class="page-header">
-                <div class="page-header-eyebrow">Analysis Complete</div>
-                <h1>Detection Results</h1>
+        <div class="container report-container">
+            <div class="watermark">AI Generated Report – For Verification Purposes Only</div>
+            <div class="page-header report-header">
+                <div class="page-header-eyebrow">Forensic Verification Report</div>
+                <h1>Analysis Complete</h1>
             </div>
-
-            <!-- Loading -->
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Running inference…</p>
-            </div>
-
-            <!-- Results -->
-            <div class="results-section" id="resultsSection" style="display:none;">
-
+            <div class="loading" id="loading"><div class="spinner"></div><p>Retrieving report...</p></div>
+            
+            <div class="results-section" id="resultsSection" style="display:none; position:relative;">
                 <!-- Verdict card -->
                 <div class="verdict-card" id="verdictCard">
-                    <!-- .verdict-band injected by JS -->
+                    <!-- Circular Verification Seal -->
+                    <div class="verification-seal" id="verificationSeal">
+                        <div class="seal-inner" id="sealInner">
+                            <svg class="seal-icon" id="sealIcon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"></svg>
+                            <span class="seal-text" id="sealText">VERIFIED</span>
+                        </div>
+                    </div>
+                    
                     <div class="verdict-band" id="verdictBand">
+                        <div class="verdict-eyebrow">VERDICT</div>
                         <div class="verdict-label" id="resultLabel"></div>
                         <div class="verdict-confidence-num" id="confidenceValue"></div>
                         <div class="verdict-confidence-label">confidence score</div>
                     </div>
-
-                    <!-- Confidence bar -->
-                    <div class="confidence-bar-wrap">
-                        <div class="confidence-bar-label">
-                            <span>0%</span>
-                            <span>50%</span>
-                            <span>100%</span>
+                    
+                    <!-- Toggle Switch & Image -->
+                    <div class="analysis-visual-section">
+                        <div class="toggle-container">
+                            <span class="toggle-label active" id="lblOrig">Original</span>
+                            <label class="switch">
+                                <input type="checkbox" id="toggleHeatmap">
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="toggle-label" id="lblAi">AI Analysis</span>
                         </div>
-                        <div class="confidence-bar-track">
-                            <div class="confidence-bar-fill" id="confidenceBar"></div>
-                        </div>
-                    </div>
-
-                    <!-- File meta -->
-                    <div class="result-meta">
-                        <div class="result-detail-row">
-                            <img class="result-thumb" id="thumbnail" src="" alt="Analyzed image">
-                            <div class="result-detail-list">
-                                <div class="detail-item">
-                                    <span class="detail-label">Filename</span>
-                                    <span class="detail-value" id="filename">—</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Analyzed at</span>
-                                    <span class="detail-value" id="timestamp">—</span>
-                                </div>
-                            </div>
+                        <div class="image-preview-wrapper" id="imageWrapper">
+                            <img class="result-thumb-large" id="thumbnail" src="" alt="Analyzed image">
+                            <div class="heatmap-overlay" id="heatmapOverlay"></div>
                         </div>
                     </div>
 
-                    <!-- Download buttons -->
+                    <!-- Analysis Summary -->
+                    <div class="analysis-summary">
+                        <h3>Analysis Summary</h3>
+                        <div class="summary-grid">
+                            <div class="summary-box"><div class="s-icon">✔️</div><div class="s-text">Face Detected</div></div>
+                            <div class="summary-box"><div class="s-icon">✔️</div><div class="s-text">Features Extracted</div></div>
+                            <div class="summary-box"><div class="s-icon">✔️</div><div class="s-text">Model Inference</div></div>
+                            <div class="summary-box" id="tsBox"><div class="s-icon" id="tsIcon">✔️</div><div class="s-text" id="tsText">Verified</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Why Fake Insights -->
+                    <div class="insights-section" id="insightsSection" style="display:none;">
+                        <h3>Possible Manipulations Detected:</h3>
+                        <ul class="insight-list">
+                            <li>Inconsistent facial lighting and shadow gradients</li>
+                            <li>Blurred geometric edges around facial contour</li>
+                            <li>Digital artifacts mapped near eye/mouth regions</li>
+                        </ul>
+                    </div>
+
+                    <!-- Table Details -->
+                    <div class="forensic-table-wrap">
+                        <table class="forensic-table">
+                            <tr><td>Filename</td><td id="filename" class="val-dark"></td></tr>
+                            <tr><td>Date of Analysis</td><td id="timestamp" class="val-dark"></td></tr>
+                            <tr><td>Overall Assessment</td><td id="tableAssessment" class="val-bold"></td></tr>
+                        </table>
+                    </div>
+
                     <div class="result-actions">
-                        <button class="btn btn-secondary" id="downloadPdf">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="7 10 12 15 17 10"/>
-                                <line x1="12" y1="15" x2="12" y2="3"/>
-                            </svg>
-                            PDF Report
-                        </button>
-                        <button class="btn btn-secondary" id="downloadJson">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="16 18 22 12 16 6"/>
-                                <polyline points="8 6 2 12 8 18"/>
-                            </svg>
-                            JSON Data
-                        </button>
+                        <button class="btn btn-secondary" id="downloadPdf">PDF Report</button>
+                        <button class="btn btn-secondary" id="downloadJson">JSON Data</button>
                     </div>
                 </div>
-
-                <!-- Nav -->
+                
                 <div class="nav-actions">
-                    <a href="/static/index.html" class="btn btn-primary">Analyze Another Image</a>
-                    <a href="/static/history.html" class="link">View All Results →</a>
+                    <a href="/static/index.html" class="btn btn-primary">Review Another Item</a>
+                    <a href="/static/history.html" class="link">View Verification History →</a>
                 </div>
             </div>
-
-            <!-- Error -->
-            <div class="error-section" id="errorSection" style="display:none;">
-                <div class="error-card">
-                    <svg class="error-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="8" x2="12" y2="12"/>
-                        <line x1="12" y1="16" x2="12.01" y2="16"/>
-                    </svg>
-                    <h2>Unable to Load Results</h2>
-                    <p id="errorText"></p>
-                    <a href="/static/index.html" class="btn btn-primary">Go Back</a>
-                </div>
-            </div>
-
+            <div class="error-section" id="errorSection" style="display:none;"><p id="errorText"></p></div>
         </div>
     </main>
-
     <footer>
-        <div class="footer-inner">
-            <span class="footer-copy">© 2026 Deepfake Detection Platform</span>
-            <div class="footer-status">
-                <div class="footer-status-dot"></div>
-                <span>Model online</span>
-            </div>
+        <div class="footer-inner report-footer">
+            <span class="footer-copy">Created by Ayush Shrivastava, Divyanshi jaiwal, Charanjeet Singh, Chirag pandey</span>
+            <div class="footer-meta">Generated on: <span id="genDate"></span></div>
         </div>
     </footer>
-
 </div>
 <script src="/static/js/results.js"></script>
-<script>
-/* Enhance the displayResults to wire up new verdict-band UI */
-const _orig = typeof displayResults === 'function' ? displayResults : null;
-
-// We override after results.js loads
-window.addEventListener('DOMContentLoaded', () => {
-    /* hook confidence bar after displayResults runs */
-    const origDisplay = window.displayResults;
-    if (typeof origDisplay === 'function') {
-        window.displayResults = function(data) {
-            origDisplay(data);
-            const result = data.result || data;
-            const label  = (result.label || data.label || '').toLowerCase();
-            const conf   = Math.round((result.confidence || data.confidence || 0) * 100);
-
-            /* Verdict band color */
-            const band = document.getElementById('verdictBand');
-            if (band) {
-                band.className = `verdict-band ${label}`;
-            }
-
-            /* Verdict pill */
-            const pill = document.getElementById('resultLabel');
-            if (pill) {
-                pill.innerHTML = `<span class="dot"></span>${label.charAt(0).toUpperCase() + label.slice(1)}`;
-                pill.className = `verdict-label ${label}`;
-            }
-
-            /* Confidence bar */
-            const bar = document.getElementById('confidenceBar');
-            if (bar) {
-                bar.className = `confidence-bar-fill ${label}`;
-                setTimeout(() => { bar.style.width = `${conf}%`; }, 100);
-            }
-            const pct = document.getElementById('confBarPct');
-            if (pct) pct.textContent = `${conf}%`;
-        };
-    }
-});
-</script>
 </body>
 </html>
